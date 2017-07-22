@@ -69,6 +69,7 @@ contract Temp {
           bytes32 fakeTransactionHash = sha3(rlpTransaction, rlpReceipt);
           uint gasPrice = getGasPrice(rlpTransaction);
           transactions[blockNum][fakeTransactionHash].gasPrice = gasPrice;
+          require (getCumulativeGas(rlpReceipt) > blocks[blockNum].currGasUsed);
           uint gasUsed = getCumulativeGas(rlpReceipt) - blocks[blockNum].currGasUsed;
           transactions[blockNum][fakeTransactionHash].gasUsed = gasUsed;
           uint newAvg = (blocks[blockNum].currAvgGasPrice * blocks[blockNum].currGasUsed + gasUsed * gasPrice) / (blocks[blockNum].currGasUsed + gasUsed);
