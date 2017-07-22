@@ -10,43 +10,75 @@ contract Temp {
   mapping (uint => BlockHeader) blocks;
 
   struct BlockHeader {
-    uint      prevBlockHash;// 0
-    bytes32   stateRoot;    // 3
-    bytes32   txRoot;       // 4
-    bytes32   receiptRoot;  // 5
+    uint      prevBlockHash;  // 0
+    bytes32   stateRoot;      // 3
+    bytes32   txRoot;         // 4
+    bytes32   receiptRoot;    // 5
+    uint      currGasUsed;    // This is the current total gas seen in tx proved.
+    uint      currAvgGasPrice;// This is the current avg in the tx seen so far.
   }
 
+  struct Transaction {
+    uint gasPrice;
+    uint gasUsed; //we create this, is not naturally a tx field
+  }
 
-	mapping (bytes32 => Transaction) transactions;
+  //Block number => made up transaction hash => details about transaction.
+	mapping (uint => bytes32 => Transaction) transactions;
   struct Transaction {
     //data
   }
 
-	//can get the block hash of the last 256 blocks.
-	//have to start at the last 256 blocks.
-
-	//do we need a seperate method of storing blocks depending on proof? No.
-	//Blocks should be stored all in a single mapping.
-
-	//Then, anyone can refer to them. Should they use mulitple things?
-
-
-
-  function submitBlock(uint blockNum, bytes32 blockHash, bytes rlpHeader) {
-		if (blockNum >= block.number - 256) {
-			if (blockHash != block.blockhash(blockNum) && blockHash != sha3(rlpHeader)) {
-				throw;
-			} else {
-				blocks[blockHash] = parseBlockHeader(rlpHeader);
-			}
-		}
-		//Can just let people build back to real block hashes. Maybe let them encode
-		//rlp encoding of lists of headers.
-		//
-    BlockHeader memory header = parseBlockHeader(rlpHeader);
-    blocks[blockHash] = header;
-    //TO DO: pass in cmix, check PoW
+  //NOTE: Blocks have to be submitted backwards. Have to start
+  //with a block in the most recent 256 blocks, and slowly work
+  //way backwards to have all blocks one wants.
+  function submitBlock(uint blockNum, bytes rlpHeader) {
+    if (blockNum >= block.number - 256) {
+      if (sha3(rlpHeader) == block.blockhash(blockNum)) {
+        blocks[blockNum] = parseBlockHeader(rlpHeader);
+      }
+    } else if (blocks[blockNum + 1].prevBlockHash != 0) {
+      if (sha3(rlpHeader) == blocks[blockNum + 1].prevBlockHash) {
+        blocks[blockNum] = parseBlockHeader(rlpHeader);
+      }
+    }
+    revert();
   }
+
+
+  //Goals:
+
+  /*
+    All transactions must be submitted.
+    Must be submitted in order (this makes math on calculating gas used much easier)
+
+    Ok, so.
+
+    Assert cumulative gasUsed of this one (found in receipt), is larger than the
+    cumulative gas used by the previous transaction in the block.
+
+    For now, just going to assume that they do this correctly and don't fuck with shit.
+  */
+
+  function submitTransaction(uint blockNum, uint[] indexes, bytes txStack, bytes transactionPrefix, bytes rlpTransaction
+                             bytes receiptStack, bytes receiptPrefix, bytes rlpReceipt)
+  {
+    if (blocks[blockNum].prevBlockHash == 0) revert() //just a check that the block has been submitted
+    bytes32 txRoot = blocks[blockNum].txRoot;
+    bytes32 receiptRoot = blocks[blockNum].receiptRoot;
+    if (checkProof(txRoot, txStack, indexes, transactionPrefix, rlpTransaction) &&
+        checkProof(receiptRoot, receiptStack, indexes, receiptPrefix, rlpReceipt)) {
+          bytes32 fakeTransactionHash = sha3(rlpTransaction, rlpReceipt);
+          transactions[blockNum][fakeTransactionHash].gasPrice = getGasPrice(rlpTransaction);
+          uint gasUsed = getCumulativeGas(rlpReceipt) - blocks[blockNum].currGasUsed;
+          transactions[blockNum][fakeTransactionHash].gasUsed = gasUsed;
+          //do stuff here calculating the avg
+        }
+  }
+
+
+
+
 
   //This function probably does not work as-is
   function checkStateProof(bytes32 blockHash, bytes rlpStack, uint[] indexes, bytes statePrefix, bytes rlpState) constant returns (bool) {
@@ -139,6 +171,32 @@ contract Temp {
   function test(bytes rlpValue) constant returns (bytes) {
     return rlpValue.toRLPItem().toBytes();
   }
+
+
+
+  //gets the second item from the transaction receipt
+  function getCumulativeGas(bytes rlpReceipt) constant returns (uint) {
+    RLP.RLPItem[] memory receipt = rlpReceipt.toRLPItem().toList();
+    return receipt[1].toUint();
+  }
+
+  //rlpTransaction is a value at the bottom of the transaction trie.
+  function getGasPrice(bytes rlpTransaction) constant returns (uint) {
+    RLP.RLPItem[] memory list = rlpTransaction.toRLPItem().toList();
+    return list[1].toUint();
+  }
+
+
+
+  //rlpTransaction is a value at the bottom of the transaction trie.
+  function getTransactionDetails(bytes rlpTransaction) constant internal returns (Transaction memory tx) {
+    RLP.RLPItem[] memory list = rlpTransaction.toRLPItem().toList();
+    tx.gasPrice = list[1].toUint();
+    //tx.gasLimit = list[2].toUint();
+    return tx;
+  }
+
+
 
   //rlpTransaction is a value at the bottom of the transaction trie. This, however,
   //has the first few bytes chopped off.
