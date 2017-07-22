@@ -11,7 +11,7 @@ contract GasHole {
 	mapping(address => Register) reg;
 
 	modifier onlyRegistered () {
-		if(escrow[msg.sender] == 0) throw;
+		if(escrow[msg.sender] == 0) revert();
 		_;
 	}
 
@@ -39,12 +39,12 @@ contract GasHole {
 	}
 
 	function register () payable returns (bool) {
-		if(msg.value <= MIN_DEPOSIT || escrow[msg.sender] != 0) throw;
+		if(msg.value <= MIN_DEPOSIT || escrow[msg.sender] != 0) revert();
 		reg[msg.sender].deposit = msg.value;
 	}
 
 	function withdraw () onlyRegistered returns (bool) {
-		if (reg[msg.sender].lastBlock > block.number - 256) throw;
+		if (reg[msg.sender].lastBlock > block.number - 256) revert();
 		msg.sender.transfer(reg[msg.sender].deposit);
 		delete reg[msg.sender];
 	}
