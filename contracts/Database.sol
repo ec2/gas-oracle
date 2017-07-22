@@ -1,6 +1,6 @@
-pragma solidity ^0.4.11;
+pragma solidity ^0.4.8;
 
-import "./RLP.sol";
+import "RLP.sol";
 
 contract Database {
   using RLP for RLP.RLPItem;
@@ -10,7 +10,7 @@ contract Database {
   mapping (uint => BlockHeader) blocks;
 
   struct BlockHeader {
-    uint      prevBlockHash;  // 0
+    bytes32   prevBlockHash;  // 0
     bytes32   stateRoot;      // 3
     bytes32   txRoot;         // 4
     bytes32   receiptRoot;    // 5
@@ -18,9 +18,8 @@ contract Database {
     uint      currAvgGasPrice;// This is the current avg in the tx seen so far.
   }
 
-
   //Block number => made up transaction hash => details about transaction.
-	mapping (uint => bytes32 => Transaction) transactions;
+	mapping (uint => mapping(bytes32 => Transaction)) transactions;
   struct Transaction {
     uint gasPrice;
     uint gasUsed; //we create this, is not naturally a tx field
@@ -58,35 +57,32 @@ contract Database {
     For now, just going to assume that they do this correctly and don't fuck with shit.
   */
 
-  function submitTransaction(uint blockNum, uint[] indexes, bytes txStack, bytes transactionPrefix, bytes rlpTransaction
+  function submitTransaction(uint blockNum, uint[] indexes, bytes txStack, bytes transactionPrefix, bytes rlpTransaction,
                              bytes receiptStack, bytes receiptPrefix, bytes rlpReceipt)
   {
-    if (blocks[blockNum].prevBlockHash == 0) revert() //just a check that the block has been submitted
-    bytes32 txRoot = blocks[blockNum].txRoot;
-    bytes32 receiptRoot = blocks[blockNum].receiptRoot;
-    if (checkProof(txRoot, txStack, indexes, transactionPrefix, rlpTransaction) &&
-        checkProof(receiptRoot, receiptStack, indexes, receiptPrefix, rlpReceipt)) {
+    if (blocks[blockNum].prevBlockHash == 0) revert(); //just a check that the block has been submitted
+    if (checkProof(blocks[blockNum].txRoot, txStack, indexes, transactionPrefix, rlpTransaction) &&
+        checkProof(blocks[blockNum].receiptRoot, receiptStack, indexes, receiptPrefix, rlpReceipt)) {
           bytes32 fakeTransactionHash = sha3(rlpTransaction, rlpReceipt);
           uint gasPrice = getGasPrice(rlpTransaction);
           transactions[blockNum][fakeTransactionHash].gasPrice = gasPrice;
           require (getCumulativeGas(rlpReceipt) > blocks[blockNum].currGasUsed);
           uint gasUsed = getCumulativeGas(rlpReceipt) - blocks[blockNum].currGasUsed;
           transactions[blockNum][fakeTransactionHash].gasUsed = gasUsed;
-          uint newAvg = (blocks[blockNum].currAvgGasPrice * blocks[blockNum].currGasUsed + gasUsed * gasPrice) / (blocks[blockNum].currGasUsed + gasUsed);
+          blocks[blockNum].currAvgGasPrice = (blocks[blockNum].currAvgGasPrice * blocks[blockNum].currGasUsed + gasUsed * gasPrice) / (blocks[blockNum].currGasUsed + gasUsed);
           blocks[blockNum].currGasUsed += gasUsed;
-          blocks[blockNum].currAvgGasPrice = newAvg;
         }
   }
 
-  function getStat(uint type, uint blockNum) returns (uint) {
+  function getStat(uint dataType, uint blockNum) returns (uint) {
     //In the future, this will match the type of the thing we are submitting
-    return blocks[blockNum].gasPrice;
+    return blocks[blockNum].currAvgGasPrice;
   }
 
 
   //This function probably does not work as-is
-  function checkStateProof(bytes32 blockHash, bytes rlpStack, uint[] indexes, bytes statePrefix, bytes rlpState) constant returns (bool) {
-   bytes32 stateRoot = blocks[blockHash].stateRoot;
+  function checkStateProof(uint blockNum, bytes rlpStack, uint[] indexes, bytes statePrefix, bytes rlpState) constant returns (bool) {
+   bytes32 stateRoot = blocks[blockNum].stateRoot;
    if (checkProof(stateRoot, rlpStack, indexes, statePrefix, rlpState)) {
      return true;
    } else {
@@ -94,8 +90,8 @@ contract Database {
    }
   }
 
-  function checkTxProof(bytes32 blockHash, bytes rlpStack, uint[] indexes, bytes transactionPrefix, bytes rlpTransaction) constant returns (bool) {
-    bytes32 txRoot = blocks[blockHash].txRoot;
+  function checkTxProof(uint blockNum, bytes rlpStack, uint[] indexes, bytes transactionPrefix, bytes rlpTransaction) constant returns (bool) {
+    bytes32 txRoot = blocks[blockNum].txRoot;
     if (checkProof(txRoot, rlpStack, indexes, transactionPrefix, rlpTransaction)) {
       return true;
     } else {
@@ -103,8 +99,8 @@ contract Database {
     }
   }
 
-  function checkReceiptProof(bytes32 blockHash, bytes rlpStack, uint[] indexes, bytes receiptPrefix, bytes rlpReceipt) constant returns (bool) {
-   bytes32 receiptRoot = blocks[blockHash].receiptRoot;
+  function checkReceiptProof(uint blockNum, bytes rlpStack, uint[] indexes, bytes receiptPrefix, bytes rlpReceipt) constant returns (bool) {
+   bytes32 receiptRoot = blocks[blockNum].receiptRoot;
    if (checkProof(receiptRoot, rlpStack, indexes, receiptPrefix, rlpReceipt)) {
      return true;
    } else {
@@ -120,7 +116,7 @@ contract Database {
      uint idx;
      while(it.hasNext()) {
       if (idx == 0) {
-        header.prevBlockHash = it.next().toUint();
+        header.prevBlockHash = bytes32(it.next().toUint());
       } else if (idx == 3) {
         header.stateRoot = bytes32(it.next().toUint());
       } else if (idx == 4) {
@@ -160,16 +156,16 @@ contract Database {
    }
   }
 
-  function getStateRoot(bytes32 blockHash) constant returns (bytes32) {
-    return blocks[blockHash].stateRoot;
+  function getStateRoot(uint blockNum) constant returns (bytes32) {
+    return blocks[blockNum].stateRoot;
   }
 
-  function getTxRoot(bytes32 blockHash) constant returns (bytes32) {
-    return blocks[blockHash].txRoot;
+  function getTxRoot(uint blockNum) constant returns (bytes32) {
+    return blocks[blockNum].txRoot;
   }
 
-  function getReceiptRoot(bytes32 blockHash) constant returns (bytes32) {
-    return blocks[blockHash].receiptRoot;
+  function getReceiptRoot(uint blockNum) constant returns (bytes32) {
+    return blocks[blockNum].receiptRoot;
   }
 
   function test(bytes rlpValue) constant returns (bytes) {
@@ -199,35 +195,4 @@ contract Database {
     //tx.gasLimit = list[2].toUint();
     return tx;
   }
-
-
-
-  //rlpTransaction is a value at the bottom of the transaction trie. This, however,
-  //has the first few bytes chopped off.
-  function getTransactionDetails(bytes rlpTransaction) constant returns (uint) {
-  	RLP.RLPItem[] memory list = rlpTransaction.toRLPItem().toList();
-    return list[2].toUint();
-    /*
-    uint idx = 0;
-  	while(it.hasNext()) {
-  		if (idx == 0) {
-  		  tx.nonce = it.next().toUint();
-  		} else if (idx == 1) {
-  			tx.gasPrice = it.next().toUint();
-  		} else if (idx == 2) {
-        tx.gasLimit = it.next().toUint();
-  		} else if (idx == 3) {
-  			tx.to = it.next().toAddress();
-  		} else if (idx == 4) {
-  			tx.value = it.next().toUint(); // amount of etc sent
-  		} else if (idx == 5) {
-        	tx.data = it.next().toBytes();
-      	}
-  		idx++;
-  	}
-    return tx;
-    */
-
-  }
-
 }
