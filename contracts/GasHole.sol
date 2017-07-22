@@ -3,7 +3,9 @@ import "./Database.sol";
 
 contract GasHole {
 
-	uint constant MIN_DEPOSIT = 0.1 ether;
+	event Registered(address person);
+
+	uint constant MIN_DEPOSIT = 1 wei;
 
 	struct Register {
 		uint deposit;
@@ -70,6 +72,8 @@ contract GasHole {
 	function register () payable returns (bool) {
 		if(msg.value <= MIN_DEPOSIT || reg[msg.sender].deposit != 0) revert();
 		reg[msg.sender].deposit = msg.value;
+		Registered(msg.sender);
+		return true;
 	}
 
 	function withdraw () onlyRegistered returns (bool) {
