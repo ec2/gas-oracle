@@ -23,10 +23,10 @@ module.exports = (options) => ({ // eslint-disable-line
       { test: /\.(json)$/, loader: 'ethdeploy-environment-loader' },
     ],
     loaders: [
-      { test: /\.(sol)$/, loader: 'ethdeploy-solc-loader', optimize: 1 },
+      { test: /\.(sol)$/, loader: 'ethdeploy-solc-loader', optimize: 1, filterWarnings: true },
     ],
     deployment: (deploy, contracts, done) => {
-      deploy(contracts['../contracts/C.sol:C'], { from: 0 }).then(() => {
+      deploy(contracts['../contracts/GasHole.sol:GasHole'], { from: 0 }).then(() => {
         done();
       });
     },
