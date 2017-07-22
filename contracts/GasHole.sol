@@ -49,6 +49,8 @@ contract GasHole {
 		uint escrow;
 		//1 for being Challenged
 		uint challengeStatus;
+
+
 	}
 	mapping (uint => Stat) stats;
 	mapping(uint => mapping (uint => Challenge)) challenges;
@@ -86,17 +88,19 @@ contract GasHole {
 		s.servedBy = msg.sender;
 	}
 
-	function submitAndVerifyChallenge (uint _statNum, uint _challengeNumber, bytes _inputChallenge) returns (bool){
+	function verifyChallenge (uint _statNum, uint _challengeNumber, bytes _inputChallenge) returns (bool){
 		Stat memory s = stats[_statNum];
 
 		if(challenges[_statNum][_challengeNumber].challenger != msg.sender) revert();
 
-		//MERKLEEEEEEEEEEEEEEEEEEeeee proof'
+		//database.getStat(type, block) returns
+
 		//if proof == true {give back deposit, and send this user the escrow, update our data}
 		//if proof == false
 
 		return true;
 	}
+
 
 	function challengeStat(uint _statNum) payable returns (uint challengeNumber) {
 		//call the correct function depending on the data type
@@ -105,6 +109,8 @@ contract GasHole {
 		s.state = StatState.Challenged;
 		challenges[_statNum][s.challengeNum] = Challenge({challengeNum: s.challengeNum, challenger: msg.sender, challengeStatus: 1, escrow: msg.value});
 		s.challengeNum ++;
+
+		//timer starts for 100 blocks
 
 		return s.challengeNum - 1 ;
 	}
