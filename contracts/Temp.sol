@@ -78,8 +78,10 @@ contract Temp {
         }
   }
 
-
-
+  function getStat(uint type, uint blockNum) returns (uint) {
+    //In the future, this will match the type of the thing we are submitting
+    return blocks[blockNum].gasPrice;
+  }
 
 
   //This function probably does not work as-is
