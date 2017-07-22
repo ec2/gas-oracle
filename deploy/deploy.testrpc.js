@@ -25,10 +25,12 @@ module.exports = (options) => ({ // eslint-disable-line
     loaders: [
       { test: /\.(sol)$/, loader: 'ethdeploy-solc-loader', optimize: 1, filterWarnings: true },
     ],
-    deployment: (deploy, contracts, done) => {
-      deploy(contracts['../contracts/GasHole.sol:GasHole'], { from: 0 }).then(() => {
-        done();
-      });
+		deployment: (deploy, contracts, done) => {
+			deploy(contracts['../contracts/Database.sol:Database'], { from: 0}) .then((contractInstance) => {
+				deploy(contracts['../contracts/GasHole.sol:GasHole'], contractInstance.address, { from: 0 }).then(() => {
+					done();
+				});
+			});
     },
   },
   plugins: [
