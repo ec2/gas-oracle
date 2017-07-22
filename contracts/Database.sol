@@ -1,6 +1,6 @@
 pragma solidity ^0.4.8;
 
-import "RLP.sol";
+import "./RLP.sol";
 
 contract Database {
   using RLP for RLP.RLPItem;

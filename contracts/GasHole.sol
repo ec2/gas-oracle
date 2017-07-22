@@ -1,5 +1,5 @@
 pragma solidity ^0.4.7;
-import "Database.sol";
+import "./Database.sol";
 
 contract GasHole {
 
@@ -80,7 +80,7 @@ contract GasHole {
 
 	function requestStat (bytes4 _funID, uint _dataType, uint _blockNumber) payable returns (bool) {
 		currStat++;
-		stats[currStat] = Stat({cbAdd: msg.sender, funID: _funID, state: StatState.Requested, dataType: _dataType, blockNum: _blockNumber, servedBy: address(0), challengeNum: 0});
+		stats[currStat] = Stat({cbAdd: msg.sender, funID: _funID, state: StatState.Requested, dataType: _dataType, blockNum: _blockNumber, servedBy: address(0), challengeNum: 0, data: 0});
 	}
 
 	function submitStat (uint statNum, bytes _inputStat, uint _dataType) onlyRegistered returns (bool) {
@@ -105,17 +105,17 @@ contract GasHole {
 			//payoput escrow of challenger
 			s.servedBy.transfer(challenges[_statNum][_challengeNumber].escrow);
 			s.state = StatState.Fulfilled;
-			challenges[_statNum][_challengeNum].challengeStatus = 2;
+			challenges[_statNum][_challengeNumber].challengeStatus = 2;
 			return false;
 		}
 		//challenger successful
 		else {
 
-			challenges[_statNum][_challengeNumber].challenger.transfer(reg[s.servedBy].escrow);
+			challenges[_statNum][_challengeNumber].challenger.transfer(reg[s.servedBy].deposit);
 			delete reg[s.servedBy];
 			s.state = StatState.Fulfilled;
 			s.data = result;
-			challenges[_statNum][_challengeNum].challengeStatus = 3;
+			challenges[_statNum][_challengeNumber].challengeStatus = 3;
 		}
 		return true;
 	}
