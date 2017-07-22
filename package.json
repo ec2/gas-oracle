@@ -1,21 +1,50 @@
 {
-  "name": "oracle",
-  "version": "1.0.0",
-  "description": "",
-  "main": "src/index.js",
+  "name": "@gnosis.pm/gnosis-core-contracts",
+  "version": "0.2.0",
+  "description": "Collection of smart contracts for the Gnosis prediction market platform",
   "scripts": {
-		"start": "node src/index.js",
-		"build": "ethdeploy deploy/deploy.testrpc.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint .",
+    "compile": "truffle compile",
+    "migrate": "truffle migrate",
+    "networks": "truffle networks",
+    "test": "node scripts/test_local.js",
+    "coverage": "solidity-coverage",
+    "injectnetinfo": "node scripts/inject_network_info.js",
+    "extractnetinfo": "node scripts/extract_network_info.js",
+    "prepublish": "eslint . && truffle compile && truffle networks --clean && node scripts/inject_network_info.js"
   },
-  "author": "Eric Tu <eric.tu@consensys.net>",
-  "license": "MIT",
-  "dependencies": {
-    "ethdeploy": "^1.0.7",
-    "ethdeploy-environment-loader": "^1.0.0",
-    "ethjs": "^0.2.7",
-    "ethjs-provider-http": "^0.1.6",
-    "ethjs-provider-signer": "^0.1.4",
-    "ethjs-signer": "^0.1.1"
-  }
+  "keywords": [
+    "Ethereum",
+    "Gnosis",
+    "Prediction-Market",
+    "Solidity",
+    "Truffle"
+  ],
+  "author": "Gnosis (https://gnosis.pm)",
+  "license": "GPL-3.0",
+  "dependencies": {},
+  "devDependencies": {
+    "@digix/tempo": "^0.2.0",
+    "babel-eslint": "^7.2.3",
+    "bignumber.js": "^4.0.2",
+    "decimal.js": "^7.2.1",
+    "eslint": "^4.1.1",
+    "eslint-plugin-babel": "^4.1.1",
+    "ethereumjs-testrpc": "^4.0.1",
+    "lodash": "^4.17.4",
+    "npm-prepublish": "^1.2.2",
+    "solidity-coverage": "^0.1.7",
+    "truffle": "^3.3.0",
+    "truffle-config": "^1.0.0",
+    "truffle-expect": "0.0.3",
+    "xhr2": "^0.1.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gnosis/gnosis-contracts.git"
+  },
+  "bugs": {
+    "url": "https://github.com/gnosis/gnosis-contracts/issues"
+  },
+  "homepage": "https://github.com/gnosis/gnosis-contracts#readme"
 }
