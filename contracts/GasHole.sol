@@ -1,4 +1,4 @@
-pragma solidity ^0.4.10;
+pragma solidity ^0.4.7;
 contract GasHole {
 
 	uint constant MIN_DEPOSIT = 0.1 ether;
@@ -11,7 +11,9 @@ contract GasHole {
 	mapping(address => Register) reg;
 
 	modifier onlyRegistered () {
-		if(escrow[msg.sender] == 0) revert();
+		if(reg[msg.sender].deposit == 0) {
+			revert();
+		}
 		_;
 	}
 
@@ -32,23 +34,33 @@ contract GasHole {
 		uint challengeNum;
 	}
 
+
+
 	struct Challenge {
 		//type of challenge
 		//when ti expires.
 		//the person that is challenging
 		//status
 		//etc.
+
+		uint challengeNum;
+		address challenger;
+		// if challenge is wrong, we must penalize
+		uint escrow;
+		//1 for being Challenged
+		uint challengeStatus;
 	}
-	mapping
 	mapping (uint => Stat) stats;
+	mapping(uint => mapping (uint => Challenge)) challenges;
+
 	uint currStat;
 
-	function GasHole() {
+	/*function GasHole() {
 
-	}
+	}*/
 
 	function register () payable returns (bool) {
-		if(msg.value <= MIN_DEPOSIT || escrow[msg.sender] != 0) revert();
+		if(msg.value <= MIN_DEPOSIT || reg[msg.sender].deposit != 0) revert();
 		reg[msg.sender].deposit = msg.value;
 	}
 
@@ -60,21 +72,41 @@ contract GasHole {
 
 	function requestStat (bytes4 _funID, uint _dataType, uint _blockNumber) payable returns (bool) {
 		currStat++;
-		stats[currStat] = Stat({cbAdd: msg.sender, funID: _funID, state: Requested, dataType: _dataType, blockNum: _blockNum});
+		stats[currStat] = Stat({cbAdd: msg.sender, funID: _funID, state: StatState.Requested, dataType: _dataType, blockNum: _blockNumber, servedBy: address(0), challengeNum: 0});
 	}
 
 	function submitStat (uint statNum, bytes _inputStat, uint _dataType) onlyRegistered returns (bool) {
 		reg[msg.sender].lastBlock = block.number;
 		Stat memory s = stats[statNum];
+		_inputStat;
+		_dataType;
 		//concat data shit
-		s.cbAdd.call(data);
-		s.done = true;
+		//s.cbAdd.call(data);
+		s.state = StatState.Fulfilled;
 		s.servedBy = msg.sender;
 	}
 
+	function submitAndVerifyChallenge (uint _statNum, uint _challengeNumber, bytes _inputChallenge) returns (bool){
+		Stat memory s = stats[_statNum];
 
-	function challengeStat(uint statNum) payable returns (bool) {
+		if(challenges[_statNum][_challengeNumber].challenger != msg.sender) revert();
+
+		//MERKLEEEEEEEEEEEEEEEEEEeeee proof'
+		//if proof == true {give back deposit, and send this user the escrow, update our data}
+		//if proof == false
+
+		return true;
+	}
+
+	function challengeStat(uint _statNum) payable returns (uint challengeNumber) {
 		//call the correct function depending on the data type
+		if(msg.value != 0.1 ether) revert();
+		Stat memory s = stats[_statNum];
+		s.state = StatState.Challenged;
+		challenges[_statNum][s.challengeNum] = Challenge({challengeNum: s.challengeNum, challenger: msg.sender, challengeStatus: 1, escrow: msg.value});
+		s.challengeNum ++;
+
+		return s.challengeNum - 1 ;
 	}
 
 }
