@@ -18,16 +18,14 @@ contract Temp {
     uint      currAvgGasPrice;// This is the current avg in the tx seen so far.
   }
 
+
+  //Block number => made up transaction hash => details about transaction.
+	mapping (uint => bytes32 => Transaction) transactions;
   struct Transaction {
     uint gasPrice;
     uint gasUsed; //we create this, is not naturally a tx field
   }
 
-  //Block number => made up transaction hash => details about transaction.
-	mapping (uint => bytes32 => Transaction) transactions;
-  struct Transaction {
-    //data
-  }
 
   //NOTE: Blocks have to be submitted backwards. Have to start
   //with a block in the most recent 256 blocks, and slowly work
@@ -69,10 +67,13 @@ contract Temp {
     if (checkProof(txRoot, txStack, indexes, transactionPrefix, rlpTransaction) &&
         checkProof(receiptRoot, receiptStack, indexes, receiptPrefix, rlpReceipt)) {
           bytes32 fakeTransactionHash = sha3(rlpTransaction, rlpReceipt);
-          transactions[blockNum][fakeTransactionHash].gasPrice = getGasPrice(rlpTransaction);
+          uint gasPrice = getGasPrice(rlpTransaction);
+          transactions[blockNum][fakeTransactionHash].gasPrice = gasPrice;
           uint gasUsed = getCumulativeGas(rlpReceipt) - blocks[blockNum].currGasUsed;
           transactions[blockNum][fakeTransactionHash].gasUsed = gasUsed;
-          //do stuff here calculating the avg
+          uint newAvg = (blocks[blockNum].currAvgGasPrice * blocks[blockNum].currGasUsed + gasUsed * gasPrice) / (blocks[blockNum].currGasUsed + gasUsed);
+          blocks[blockNum].currGasUsed += gasUsed;
+          blocks[blockNum].currAvgGasPrice = newAvg;
         }
   }
 
