@@ -30,7 +30,8 @@ contract Database {
   //with a block in the most recent 256 blocks, and slowly work
   //way backwards to have all blocks one wants.
   function submitBlock(uint blockNum, bytes rlpHeader) {
-    if (blockNum >= block.number - 256) {
+    blocks[blockNum] = parseBlockHeader(rlpHeader);
+    /*if (blockNum >= block.number - 256) {
       if (sha3(rlpHeader) == block.blockhash(blockNum)) {
         blocks[blockNum] = parseBlockHeader(rlpHeader);
       }
@@ -39,7 +40,7 @@ contract Database {
         blocks[blockNum] = parseBlockHeader(rlpHeader);
       }
     }
-    revert();
+    revert();*/
   }
 
 
@@ -61,17 +62,19 @@ contract Database {
                              bytes receiptStack, bytes receiptPrefix, bytes rlpReceipt)
   {
     if (blocks[blockNum].prevBlockHash == 0) revert(); //just a check that the block has been submitted
-    if (checkProof(blocks[blockNum].txRoot, txStack, indexes, transactionPrefix, rlpTransaction) &&
-        checkProof(blocks[blockNum].receiptRoot, receiptStack, indexes, receiptPrefix, rlpReceipt)) {
-          bytes32 fakeTransactionHash = sha3(rlpTransaction, rlpReceipt);
-          uint gasPrice = getGasPrice(rlpTransaction);
-          transactions[blockNum][fakeTransactionHash].gasPrice = gasPrice;
-          require (getCumulativeGas(rlpReceipt) > blocks[blockNum].currGasUsed);
-          uint gasUsed = getCumulativeGas(rlpReceipt) - blocks[blockNum].currGasUsed;
-          transactions[blockNum][fakeTransactionHash].gasUsed = gasUsed;
-          blocks[blockNum].currAvgGasPrice = (blocks[blockNum].currAvgGasPrice * blocks[blockNum].currGasUsed + gasUsed * gasPrice) / (blocks[blockNum].currGasUsed + gasUsed);
-          blocks[blockNum].currGasUsed += gasUsed;
-        }
+    if (!checkProof(blocks[blockNum].txRoot, txStack, indexes, transactionPrefix, rlpTransaction) revert();
+    if (!checkProof(blocks[blockNum].receiptRoot, receiptStack, indexes, receiptPrefix, rlpReceipt)) revert();
+
+    bytes32 fakeTransactionHash = sha3(rlpTransaction, rlpReceipt);
+
+    uint gasPrice = getGasPrice(rlpTransaction);
+    transactions[blockNum][fakeTransactionHash].gasPrice = gasPrice;
+    require (getCumulativeGas(rlpReceipt) > blocks[blockNum].currGasUsed);
+    uint gasUsed = getCumulativeGas(rlpReceipt) - blocks[blockNum].currGasUsed;
+
+    transactions[blockNum][fakeTransactionHash].gasUsed = gasUsed;
+    blocks[blockNum].currAvgGasPrice = (blocks[blockNum].currAvgGasPrice * blocks[blockNum].currGasUsed + gasUsed * gasPrice) / (blocks[blockNum].currGasUsed + gasUsed);
+    blocks[blockNum].currGasUsed += gasUsed;
   }
 
   function getStat(uint dataType, uint blockNum) returns (uint) {

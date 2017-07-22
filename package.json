@@ -4,18 +4,22 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-		"start": "node src/index.js",
-		"build": "ethdeploy deploy/deploy.testrpc.js",
+    "start": "node src/index.js",
+    "build": "ethdeploy deploy/deploy.testrpc.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Eric Tu <eric.tu@consensys.net>",
   "license": "MIT",
   "dependencies": {
+    "assert": "^1.4.1",
     "ethdeploy": "^1.0.7",
     "ethdeploy-environment-loader": "^1.0.0",
+    "ethdeploy-solc-loader": "^1.0.4",
     "ethjs": "^0.2.7",
     "ethjs-provider-http": "^0.1.6",
     "ethjs-provider-signer": "^0.1.4",
-    "ethjs-signer": "^0.1.1"
+    "ethjs-signer": "^0.1.1",
+    "minimatch": "^3.0.4",
+    "mocha": "^3.4.2"
   }
 }
