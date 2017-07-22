@@ -7,8 +7,7 @@ contract Temp {
   using RLP for RLP.Iterator;
   using RLP for bytes;
 
-  mapping (bytes32 => BlockHeader) blocks;
-  mapping (bytes32 => Transaction) transactions;
+  mapping (uint => BlockHeader) blocks;
 
   struct BlockHeader {
     uint      prevBlockHash;// 0
@@ -17,13 +16,33 @@ contract Temp {
     bytes32   receiptRoot;  // 5
   }
 
+
+	mapping (bytes32 => Transaction) transactions;
   struct Transaction {
     //data
   }
 
-  //For now, just assume all blocks are good + valid.
-  //In the future, will use SmartPool's verification.
-  function submitBlock(bytes32 blockHash, bytes rlpHeader) {
+	//can get the block hash of the last 256 blocks.
+	//have to start at the last 256 blocks.
+
+	//do we need a seperate method of storing blocks depending on proof? No.
+	//Blocks should be stored all in a single mapping.
+
+	//Then, anyone can refer to them. Should they use mulitple things?
+
+
+
+  function submitBlock(uint blockNum, bytes32 blockHash, bytes rlpHeader) {
+		if (blockNum >= block.number - 256) {
+			if (blockHash != block.blockhash(blockNum) && blockHash != sha3(rlpHeader)) {
+				throw;
+			} else {
+				blocks[blockHash] = parseBlockHeader(rlpHeader);
+			}
+		}
+		//Can just let people build back to real block hashes. Maybe let them encode
+		//rlp encoding of lists of headers.
+		//
     BlockHeader memory header = parseBlockHeader(rlpHeader);
     blocks[blockHash] = header;
     //TO DO: pass in cmix, check PoW

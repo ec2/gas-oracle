@@ -1,8 +1,8 @@
 pragma solidity ^0.4.10;
 contract GasHole {
-	
+
 	uint constant MIN_DEPOSIT = 0.1 ether;
-	
+
 	struct Register {
 		uint deposit;
 		uint lastBlock;
@@ -15,27 +15,36 @@ contract GasHole {
 		_;
 	}
 
-	enum StatState{ 
+	enum StatState{
 		Null,
 		Requested,
 		Fulfilled,
-		Challenged	
+		Challenged
 	}
 
 	struct Stat {
 		address cbAdd;
 		bytes4 funID;
-		StatState state;	
+		StatState state;
 		uint dataType;
 		uint blockNum;
 		address servedBy;
+		uint challengeNum;
 	}
 
+	struct Challenge {
+		//type of challenge
+		//when ti expires.
+		//the person that is challenging
+		//status
+		//etc.
+	}
+	mapping
 	mapping (uint => Stat) stats;
 	uint currStat;
 
 	function GasHole() {
-		
+
 	}
 
 	function register () payable returns (bool) {
@@ -67,5 +76,5 @@ contract GasHole {
 	function challengeStat(uint statNum) payable returns (bool) {
 		//call the correct function depending on the data type
 	}
-	
+
 }
