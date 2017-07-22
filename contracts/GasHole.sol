@@ -1,4 +1,6 @@
 pragma solidity ^0.4.7;
+import "Database.sol";
+
 contract GasHole {
 
 	uint constant MIN_DEPOSIT = 0.1 ether;
@@ -32,6 +34,7 @@ contract GasHole {
 		uint blockNum;
 		address servedBy;
 		uint challengeNum;
+		uint data;
 	}
 
 
@@ -48,6 +51,8 @@ contract GasHole {
 		// if challenge is wrong, we must penalize
 		uint escrow;
 		//1 for being Challenged
+		//2 for unsuccessful
+		//3 for successful challenge
 		uint challengeStatus;
 
 
@@ -56,10 +61,11 @@ contract GasHole {
 	mapping(uint => mapping (uint => Challenge)) challenges;
 
 	uint currStat;
+	Database db;
 
-	/*function GasHole() {
-
-	}*/
+	function GasHole(address _database) {
+		db = Database(_database);
+	}
 
 	function register () payable returns (bool) {
 		if(msg.value <= MIN_DEPOSIT || reg[msg.sender].deposit != 0) revert();
@@ -88,16 +94,29 @@ contract GasHole {
 		s.servedBy = msg.sender;
 	}
 
-	function verifyChallenge (uint _statNum, uint _challengeNumber, bytes _inputChallenge) returns (bool){
+	function verifyChallenge (uint _statNum, uint _challengeNumber) returns (bool){
 		Stat memory s = stats[_statNum];
 
 		if(challenges[_statNum][_challengeNumber].challenger != msg.sender) revert();
 
-		//database.getStat(type, block) returns
+		uint result = db.getStat(s.dataType, s.blockNum);
+		//challenger not successful
+		if(result == s.data) {
+			//payoput escrow of challenger
+			s.servedBy.transfer(challenges[_statNum][_challengeNumber].escrow);
+			s.state = StatState.Fulfilled;
+			challenges[_statNum][_challengeNum].challengeStatus = 2;
+			return false;
+		}
+		//challenger successful
+		else {
 
-		//if proof == true {give back deposit, and send this user the escrow, update our data}
-		//if proof == false
-
+			challenges[_statNum][_challengeNumber].challenger.transfer(reg[s.servedBy].escrow);
+			delete reg[s.servedBy];
+			s.state = StatState.Fulfilled;
+			s.data = result;
+			challenges[_statNum][_challengeNum].challengeStatus = 3;
+		}
 		return true;
 	}
 
