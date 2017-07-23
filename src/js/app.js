@@ -83,9 +83,13 @@ App = {
     var blocknumber = document.getElementById('inputBlocknumber').value;
     console.log(blocknumber);
     if(inputtype != "" && blocknumber != ""){
-     $('#tab_logic').append('<tr id="addr'+(i)+'"></tr>');
-     $('#addr'+i).html("<td>"+ (i) +"</td><td>" + inputtype + "</td><td>"+ blocknumber +"</td><td id='submission"+i+"'></td><td id='challenge"+i+"'></td><td id='verified"+i+"'></td>");
-     i++;
+
+     web3.eth.sendTransaction({from: web3.eth.accounts[0], to: "0x10ac7b06245bC644cB1624fCe0998937EAdbCD87"},(err, result) => {
+       console.log(result)
+       $('#tab_logic').append('<tr id="addr'+(i)+'"></tr>');
+       $('#addr'+i).html("<td>"+ (i) +"</td><td>" + inputtype + "</td><td>"+ blocknumber +"</td><td id='submission"+i+"'></td><td id='challenge"+i+"'></td><td id='verified"+i+"'></td>");
+       i++;
+     });
     }
   });
     return App.updateSubmission();
@@ -99,11 +103,14 @@ App = {
       var submission = document.getElementById('submission').value;
       console.log(submission);
       j = submission_index;
-
       if(submission_array[j] == 0) {
-        $('#submission'+j).replaceWith("<td id='submission" + j + "''>" + submission + "</td>");
-        $('#verified'+j).replaceWith("<td id='verified" + j + "''><span class='glyphicon glyphicon-remove'></td>");
         submission_array[j] = 1;
+        web3.eth.sendTransaction({from: web3.eth.accounts[0], to: "0x10ac7b06245bC644cB1624fCe0998937EAdbCD87"},(err, result) => {
+          console.log(result)
+          $('#submission'+j).replaceWith("<td id='submission" + j + "''>" + submission + "</td>");
+          $('#verified'+j).replaceWith("<td id='verified" + j + "''><span class='glyphicon glyphicon-remove'></td>");
+
+        });
       }
       else{
         alert('I\'m sorry, either your request was invalid or someone has already submitted a response to this request.')
@@ -121,10 +128,14 @@ App = {
       console.log(challenge);
       j = challenge_index;
       if(challenge_array[j] == 0) {
-        $('#challenge'+j).replaceWith("<td id='challenge" + j + "'>" + challenge + "</td>");
-        $('#verified'+j).replaceWith("<td id='verified" + j + "'>Pending...</td>");
         //setTimeout(function() {$('#verified'+j).replaceWith("<td id='verified" + j + "'><span class='glyphicon glyphicon-ok'></td>");}, 40000);
         challenge_array[j] = 1;
+        web3.eth.sendTransaction({from: web3.eth.accounts[0], to: "0x10ac7b06245bC644cB1624fCe0998937EAdbCD87"},(err, result) => {
+          console.log(result)
+          $('#challenge'+j).replaceWith("<td id='challenge" + j + "'>" + challenge + "</td>");
+          $('#verified'+j).replaceWith("<td id='verified" + j + "'>Pending...</td>");
+
+        });
       }
       else{
         alert('I\'m sorry, either your challenge was invalid or an existing challenge is currently being verified.')
