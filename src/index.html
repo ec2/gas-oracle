@@ -22,9 +22,9 @@
       <div class="row">
         <div class="col-xs-12 col-sm-8 col-sm-push-2">
           <h1 class="text-center">GasHole: A Gas Oracle</h1>
-          <h4 class="text-center">Eric Tu</h4>
+          <!-- <h4 class="text-center">Eric Tu</h4>
           <h4 class="text-center">Nate Rush</h4>
-          <h4 class="text-center">Jess Marshall</h4>
+          <h4 class="text-center">Jess Marshall</h4> -->
 
           <hr/>
           <br/>
@@ -76,7 +76,7 @@
             <!-- Modal Body -->
             <div class="modal-body">
               <h1> WARNING! </h1>
-              <h3>This will cost you X ETH.</h3>
+              <p>This request will cost you X ETH.</p>
               <p>You may not remove this request once it has been submitted.</p>
                 <form class="form-horizontal" role="form">
                   <div class="form-group">
@@ -131,15 +131,15 @@
                 <!-- Modal Body -->
                 <div class="modal-body">
                   <h1> WARNING! </h1>
-                  <h2>Submitting an answer will require collateral ETH for a minimum of 256 blocks (~1 hour).</h2>
-                  <p>Make sure you are correct or risk losing this ETH to a challenger.</p>
+                  <p>Submitting an answer will require collateral ETH for a minimum of 256 blocks (~1 hour). Make sure you are correct or risk losing this ETH to a challenger.</p>
+                  <p>You may not remove this request once it has been submitted.</p>
                     <form class="form-horizontal" role="form">
                       <div class="form-group">
                         <label class="col-sm-2 control-label"
-                              for="inputPassword3" >Index</label>
+                              for="inputPassword3" >ID</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control"
-                                id="inputIndex" placeholder="index"/>
+                                id="inputIndex" placeholder="ID"/>
                         </div>
                       </div>
                       <div class="form-group">
@@ -151,8 +151,7 @@
                         </div>
                       </div>
                     </form>
-                    <p>You may not remove this submission once it has been submitted.</p>
-                </div>
+                  </div>
 
                 <!-- Modal Footer -->
                 <div class="modal-footer">
@@ -192,10 +191,10 @@
                         <form class="form-horizontal" role="form">
                           <div class="form-group">
                             <label class="col-sm-2 control-label"
-                                  for="inputPassword3" >Index</label>
+                                  for="inputPassword3" >ID</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control"
-                                    id="challengeIndex" placeholder="index"/>
+                                    id="challengeIndex" placeholder="ID"/>
                             </div>
                           </div>
                           <div class="form-group">
@@ -227,17 +226,17 @@
 
 <!-- Table -->
 <div class="container">
-  <button class="btn btn-default" data-toggle="modal" data-target="#myModalRequest">Request</button>
-  <button class="btn btn-default" data-toggle="modal" data-target="#myModalSubmit">Submit Stat</button>
-  <button class="btn btn-default" data-toggle="modal" data-target="#myModalChallenge">Challenge</button>
+  <button class="btn btn-default btn-primary" data-toggle="modal" data-target="#myModalRequest">Request</button>
+  <button class="btn btn-default btn-success" data-toggle="modal" data-target="#myModalSubmit">Submit Stat</button>
+  <button class="btn btn-default btn-danger pull-right" data-toggle="modal" data-target="#myModalChallenge">Challenge</button>
 
   <!-- <h2>Basic Table</h2>
   <p>The .table class adds basic styling (light padding and only horizontal dividers) to a table:</p> -->
-  <table class="table" id="tab_logic">
+  <table class="table table-hover" id="tab_logic">
     <thead>
       <tr>
-        <th>Index</th>
-        <th>Oracle Request</th>
+        <th>ID</th>
+        <th>Oracle Stat Request</th>
         <th>Block Number</th>
         <th>Submission Value (wei)</th>
         <th>Challenge Value (wei)</th>
