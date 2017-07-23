@@ -62,7 +62,7 @@ contract Database {
                              bytes receiptStack, bytes receiptPrefix, bytes rlpReceipt)
   {
     if (blocks[blockNum].prevBlockHash == 0) revert(); //just a check that the block has been submitted
-    if (!checkProof(blocks[blockNum].txRoot, txStack, indexes, transactionPrefix, rlpTransaction) revert();
+    if (!checkProof(blocks[blockNum].txRoot, txStack, indexes, transactionPrefix, rlpTransaction)) revert();
     if (!checkProof(blocks[blockNum].receiptRoot, receiptStack, indexes, receiptPrefix, rlpReceipt)) revert();
 
     bytes32 fakeTransactionHash = sha3(rlpTransaction, rlpReceipt);
@@ -71,10 +71,18 @@ contract Database {
     transactions[blockNum][fakeTransactionHash].gasPrice = gasPrice;
     require (getCumulativeGas(rlpReceipt) > blocks[blockNum].currGasUsed);
     uint gasUsed = getCumulativeGas(rlpReceipt) - blocks[blockNum].currGasUsed;
-
     transactions[blockNum][fakeTransactionHash].gasUsed = gasUsed;
+
     blocks[blockNum].currAvgGasPrice = (blocks[blockNum].currAvgGasPrice * blocks[blockNum].currGasUsed + gasUsed * gasPrice) / (blocks[blockNum].currGasUsed + gasUsed);
     blocks[blockNum].currGasUsed += gasUsed;
+  }
+
+  function getPrice(uint blockNum) constant returns (uint) {
+    return blocks[blockNum].currAvgGasPrice;
+  }
+
+  function getUsed(uint blockNum) constant returns (uint) {
+    return blocks[blockNum].currGasUsed;
   }
 
   function getStat(uint dataType, uint blockNum) returns (uint) {
@@ -171,12 +179,6 @@ contract Database {
     return blocks[blockNum].receiptRoot;
   }
 
-  function test(bytes rlpValue) constant returns (bytes) {
-    return rlpValue.toRLPItem().toBytes();
-  }
-
-
-
   //gets the second item from the transaction receipt
   function getCumulativeGas(bytes rlpReceipt) constant returns (uint) {
     RLP.RLPItem[] memory receipt = rlpReceipt.toRLPItem().toList();
@@ -186,6 +188,7 @@ contract Database {
   //rlpTransaction is a value at the bottom of the transaction trie.
   function getGasPrice(bytes rlpTransaction) constant returns (uint) {
     RLP.RLPItem[] memory list = rlpTransaction.toRLPItem().toList();
+    //return 1;
     return list[1].toUint();
   }
 

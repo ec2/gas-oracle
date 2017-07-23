@@ -11,7 +11,7 @@ contract TestRequest {
   }
 
   function makeRequest() {
-    gasHole.requestStat(bytes4(sha3("getRequest(uint256)")), 0, 0);
+    gasHole.requestStat(bytes4(sha3("getRequest(uint256)")), 0, 4059939);
   }
 
   function getRequest (uint stat) {

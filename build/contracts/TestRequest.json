@@ -1,0 +1,53 @@
+{
+  "contract_name": "TestRequest",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "x",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "makeRequest",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "stat",
+          "type": "uint256"
+        }
+      ],
+      "name": "getRequest",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "_gasHole",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "type": "constructor"
+    }
+  ],
+  "unlinked_binary": "0x606060405263deadbeef600055341561001457fe5b6040516020806101b583398101604052515b60018054600160a060020a031916600160a060020a0383161790555b505b610162806100536000396000f300606060405263ffffffff60e060020a6000350416630c55699c81146100375780636a5f15b114610059578063c58343ef1461006b575bfe5b341561003f57fe5b610047610080565b60408051918252519081900360200190f35b341561006157fe5b610069610086565b005b341561007357fe5b61006960043561012d565b005b60005481565b60015460408051606860020a72676574526571756573742875696e7432353629028152815190819003601301812060006020928301819052835160e160020a63558a2f87028152600160e060020a0319909216600483015260248201819052604482018190529251600160a060020a039094169363ab145f0e93606480840194938390030190829087803b151561011957fe5b6102c65a03f1151561012757fe5b5050505b565b60008190555b505600a165627a7a723058205e7d6fa2aee5293ad43d045d76e121c86a404a0ec9e574477ea1f0bc6efe7b280029",
+  "networks": {},
+  "schema_version": "0.0.5",
+  "updated_at": 1500769382627
+}

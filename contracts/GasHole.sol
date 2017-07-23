@@ -5,6 +5,8 @@ contract GasHole {
 
 	event Registered(address person);
 	event Withdraw(address person);
+	event GoodChallenge();
+	event BadChallenge();
 
 	uint constant MIN_DEPOSIT = 1 wei;
 
@@ -91,7 +93,7 @@ contract GasHole {
 
 	function submitStat (uint statNum, uint _inputStat) onlyRegistered returns (bool) {
 		reg[msg.sender].lastBlock = block.number;
-		Stat memory s = stats[statNum];
+		Stat s = stats[statNum];
 		s.data = _inputStat;
 		bytes memory concat = new bytes(36);
 		bytes32 temp = bytes32(s.data);
@@ -109,7 +111,7 @@ contract GasHole {
 	}
 
 	function verifyChallenge (uint _statNum, uint _challengeNumber) returns (bool){
-		Stat memory s = stats[_statNum];
+		Stat s = stats[_statNum];
 
 		if(challenges[_statNum][_challengeNumber].challenger != msg.sender) revert();
 
@@ -120,6 +122,7 @@ contract GasHole {
 			s.servedBy.transfer(challenges[_statNum][_challengeNumber].escrow);
 			s.state = StatState.Fulfilled;
 			challenges[_statNum][_challengeNumber].challengeStatus = 2;
+			BadChallenge();
 			return false;
 		}
 		//challenger successful
@@ -130,8 +133,13 @@ contract GasHole {
 			s.state = StatState.Fulfilled;
 			s.data = result;
 			challenges[_statNum][_challengeNumber].challengeStatus = 3;
+			GoodChallenge();
 		}
 		return true;
+	}
+
+	function statCheck(uint _statNum) constant returns (uint) {
+		return stats[_statNum].data;
 	}
 
 
