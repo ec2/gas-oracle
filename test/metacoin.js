@@ -3,7 +3,7 @@ var GasHole = artifacts.require("./GasHole.sol");
 var TestRequest = artifacts.require("./TestRequest.sol");
 const fs = require("fs");
 
-const proofData  = JSON.parse(fs.readFileSync('/home/eric/oracle/fuck.json').toString());
+const proofData  = JSON.parse(fs.readFileSync('/Users/narush/gas-oracle-folders/gas-oracle/duck.json').toString());
 //console.log(proofData[0].txproof)
 
 contract('Database', function(accounts) {
@@ -193,10 +193,14 @@ contract('Database', function(accounts) {
     }).then(() => {
       return db.getUsed.call(blockNum)
     }).then(gasUsed => {
-      //console.log(gasUsed)
+      console.log("Total Gas Used in Block:", gasUsed.toString('10'))
       return db.getPrice.call(blockNum)
     }).then(price => {
-      //console.log(price)
+      console.log("Average Gas Price in Block:", price.toString('10'))
+    }).then(async()=>{
+      await db.getMaxGas.call(blockNum).then((max)=> {console.log("Max Gas Used", max.toString('10'))});
+      await db.getMinGas.call(blockNum).then((min)=> {console.log("Min Gas Used", min.toString('10'))});
+      return db.getMaxFee.call(blockNum).then((fee)=> {console.log("Max Fee Paid ", fee.toString('10'))});
     })
   })
 
@@ -219,7 +223,7 @@ contract('Database', function(accounts) {
     .then(() => {
       return db.getPrice.call(blockNum)
     }).then(res => {
-      console.log(res.toString('10'))
+      //console.log(res.toString('10'))
       return TestRequest.new(gasHole.address);
     })
     .then((testRequestInstance) =>{
@@ -250,7 +254,7 @@ contract('Database', function(accounts) {
     }).then(() => {
       return db.getPrice.call(blockNum)
     }).then(res => {
-      console.log(res.toString('10'))
+      //console.log(res.toString('10'))
       return gasHole.verifyChallenge(0, 0)
     }).then(tx => {
       assert.equal(tx.logs[0].event, "GoodChallenge", "should have been a valid challenge")
@@ -296,7 +300,7 @@ contract('Database', function(accounts) {
     }).then(() => {
       return gasHole.statCheck(0)
     }).then(res => {
-      console.log("THING EHRE", res)
+      //console.log("THING EHRE", res)
       return db.submitBlock(blockNum, tx.header)
     }).then(async () => {
 
@@ -305,10 +309,10 @@ contract('Database', function(accounts) {
         rec = proofData[i].receiptproof;
         await db.submitTransaction(blockNum, tx.path, tx.stack, tx.prefix, tx.value, rec.stack, rec.prefix, rec.value)
       }
-    }).then(async()=>{
-      await db.getMaxGas.call(blockNum).then((max)=> {console.log("Max ", max)});
-      await db.getMinGas.call(blockNum).then((min)=> {console.log("Min ", min)});
-      return db.getMaxFee.call(blockNum).then((fee)=> {console.log("Fee ", fee)});
+    //}).then(async()=>{
+    //  await db.getMaxGas.call(blockNum).then((max)=> {console.log("Max Gas Used", max)});
+    //  await db.getMinGas.call(blockNum).then((min)=> {console.log("Min Gas Used", min)});
+    //  return db.getMaxFee.call(blockNum).then((fee)=> {console.log("Max Fee Paid ", fee)});
     }).then(() => {
       return db.getPrice.call(blockNum)
     }).then(res => {
