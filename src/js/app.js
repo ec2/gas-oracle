@@ -133,8 +133,11 @@ $(function() {
 });
 
 $(document).ready(function(){
+
   var i=2;
+
  $("#add_row").click(function(){
+   console.log('add row');
    $('#tab_logic').append('<tr id="addr'+(i)+'"></tr>');
    var inputtype = document.getElementById('inputType').value;
    console.log(inputtype);
@@ -142,7 +145,17 @@ $(document).ready(function(){
    console.log(blocknumber);
 
   $('#addr'+i).html("<td>"+ (i) +"</td><td>" + inputtype + "</td><td>"+ blocknumber +"</td><td id='submission"+i+"'></td><td id='challenge"+i+"'></td><td id='verified"+i+"'></td>");
-  //$('#tab_logic').append('<tr id="addr'+(i+1)+'"></tr>');
   i++;
+});
+
+ $("#update_submission").click(function(){
+   console.log('update submission');
+   var submission_index = document.getElementById('inputIndex').value;
+   console.log(submission_index);
+   var submission = document.getElementById('submission').value;
+   console.log(submission);
+   j = submission_index;
+   $('#submission'+j).replaceWith("<td id='submission" + j + "''>" + submission + "</td>");
  });
+
 });
