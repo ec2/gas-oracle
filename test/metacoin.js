@@ -3,7 +3,7 @@ var GasHole = artifacts.require("./GasHole.sol");
 var TestRequest = artifacts.require("./TestRequest.sol");
 const fs = require("fs");
 
-const proofData  = JSON.parse(fs.readFileSync('/Users/narush/gas-oracle-folders/gas-oracle/fuck.json').toString());
+const proofData  = JSON.parse(fs.readFileSync('../fuck.json').toString());
 //console.log(proofData[0].txproof)
 
 contract('Database', function(accounts) {
