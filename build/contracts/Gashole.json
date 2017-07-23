@@ -1,0 +1,78 @@
+{
+  "contract_name": "Gashole",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "requestId",
+          "type": "uint256"
+        },
+        {
+          "name": "blockNumber",
+          "type": "uint256"
+        }
+      ],
+      "name": "request",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "answer",
+          "type": "uint256"
+        }
+      ],
+      "name": "challenge",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "answer",
+          "type": "uint256"
+        }
+      ],
+      "name": "submit",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    }
+  ],
+  "unlinked_binary": "0x6060604052341561000c57fe5b5b60e88061001b6000396000f300606060405263ffffffff60e060020a6000350416638bc802fb81146034578063ab82d9a0146060578063ea99c2a6146060575bfe5b3415603b57fe5b604760043560243560a4565b6040805192835260208301919091528051918290030190f35b3415606757fe5b607060043560ae565b60408051918252519081900360200190f35b3415606757fe5b607060043560ae565b60408051918252519081900360200190f35b81815b9250929050565b805b919050565b805b9190505600a165627a7a7230582035eaa8d68af8c5e8ac32bedaad1c52f0e70f4842a0aa03e81a1368c64a523b400029",
+  "networks": {
+    "1500760426022": {
+      "events": {},
+      "links": {},
+      "address": "0x1c765b8f29e4c89570a2cb60af72b6888391cb19",
+      "updated_at": 1500760573375
+    }
+  },
+  "schema_version": "0.0.5",
+  "updated_at": 1500760573375
+}

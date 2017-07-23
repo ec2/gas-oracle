@@ -1,56 +1,18 @@
 {
-  "name": "@gnosis.pm/gnosis-core-contracts",
-  "version": "0.2.0",
-  "description": "Collection of smart contracts for the Gnosis prediction market platform",
-  "scripts": {
-    "lint": "eslint .",
-    "compile": "truffle compile",
-    "migrate": "truffle migrate",
-    "networks": "truffle networks",
-    "test": "node scripts/test_local.js",
-    "coverage": "solidity-coverage",
-    "injectnetinfo": "node scripts/inject_network_info.js",
-    "extractnetinfo": "node scripts/extract_network_info.js",
-    "prepublish": "eslint . && truffle compile && truffle networks --clean && node scripts/inject_network_info.js",
-    "dev": "lite-server",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [
-    "Ethereum",
-    "Gnosis",
-    "Prediction-Market",
-    "Solidity",
-    "Truffle"
-  ],
-  "author": "Gnosis (https://gnosis.pm)",
-  "license": "GPL-3.0",
-  "dependencies": {},
-  "devDependencies": {
-    "@digix/tempo": "^0.2.0",
-    "babel-eslint": "^7.2.3",
-    "bignumber.js": "^4.0.2",
-    "decimal.js": "^7.2.1",
-    "eslint": "^4.1.1",
-    "eslint-plugin-babel": "^4.1.1",
-    "ethereumjs-testrpc": "^4.0.1",
-    "lodash": "^4.17.4",
-    "npm-prepublish": "^1.2.2",
-    "solidity-coverage": "^0.1.7",
-    "truffle": "^3.3.0",
-    "truffle-config": "^1.0.0",
-    "truffle-expect": "0.0.3",
-    "xhr2": "^0.1.4"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/gnosis/gnosis-contracts.git"
-  },
-  "bugs": {
-    "url": "https://github.com/gnosis/gnosis-contracts/issues"
-  },
-  "homepage": "https://github.com/gnosis/gnosis-contracts#readme",
+  "name": "petshop",
+  "version": "1.0.0",
+  "description": "test frontend meets contracts",
   "main": "truffle.js",
   "directories": {
     "test": "test"
+  },
+  "scripts": {
+    "dev": "lite-server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "lite-server": "^2.3.0"
   }
 }
