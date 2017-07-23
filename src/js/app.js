@@ -100,13 +100,13 @@ App = {
       console.log(submission);
       j = submission_index;
 
-      if(submission_challenge_array[j] == 0) {
+      if(submission_array[j] == 0) {
         $('#submission'+j).replaceWith("<td id='submission" + j + "''>" + submission + "</td>");
         $('#verified'+j).replaceWith("<td id='verified" + j + "''><span class='glyphicon glyphicon-remove'></td>");
-        submission_challenge_array[j] = 1;
+        submission_array[j] = 1;
       }
       else{
-        //alert that someone already submitted
+        alert('I\'m sorry, either your request was invalid or someone has already submitted a response to this request.')
       }
     });
     return App.challengeSubmission();
@@ -120,8 +120,15 @@ App = {
       var challenge = document.getElementById('challenge').value;
       console.log(challenge);
       j = challenge_index;
-      $('#challenge'+j).replaceWith("<td id='challenge" + j + "''>" + challenge + "</td>");
-      $('#verified'+j).replaceWith("<td id='verified" + j + "''>Pending...</td>");
+      if(challenge_array[j] == 0) {
+        $('#challenge'+j).replaceWith("<td id='challenge" + j + "'>" + challenge + "</td>");
+        $('#verified'+j).replaceWith("<td id='verified" + j + "'>Pending...</td>");
+        //setTimeout(function() {$('#verified'+j).replaceWith("<td id='verified" + j + "'><span class='glyphicon glyphicon-ok'></td>");}, 40000);
+        challenge_array[j] = 1;
+      }
+      else{
+        alert('I\'m sorry, either your challenge was invalid or an existing challenge is currently being verified.')
+      }
     });
   },
 
@@ -177,8 +184,10 @@ App = {
 
 $(function() {
   $(window).load(function() {
-    submission_challenge_array = new Array(1000);
-    submission_challenge_array.fill(0);
+    submission_array = new Array(1000);
+    submission_array.fill(0);
+    challenge_array = new Array(1000);
+    challenge_array.fill(0);
     App.init();
   });
 });

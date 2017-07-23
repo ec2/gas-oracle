@@ -21,7 +21,11 @@
     <div class="container">
       <div class="row">
         <div class="col-xs-12 col-sm-8 col-sm-push-2">
-          <h1 class="text-center">Gas Oracle</h1>
+          <h1 class="text-center">GasHole: A Gas Oracle</h1>
+          <h4 class="text-center">Eric Tu</h4>
+          <h4 class="text-center">Nate Rush</h4>
+          <h4 class="text-center">Jess Marshall</h4>
+
           <hr/>
           <br/>
         </div>
@@ -51,9 +55,6 @@
     </div> -->
 
 <!-- 3 buttons - each triggers modal -->
-<button class="btn btn-default" data-toggle="modal" data-target="#myModalRequest">Request</button>
-<button class="btn btn-default" data-toggle="modal" data-target="#myModalSubmit">Submit</button>
-<button class="btn btn-default" data-toggle="modal" data-target="#myModalChallenge">Challenge</button>
 
 <!-- Modals -->
   <div class="modal fade" id="myModalRequest" tabindex="-1" role="dialog"
@@ -68,17 +69,19 @@
                        <span class="sr-only">Close</span>
                 </button>
                 <h4 class="modal-title" id="myModalLabel">
-                    Request Gas Things
+                    Request Gas Stats
                 </h4>
             </div>
 
             <!-- Modal Body -->
             <div class="modal-body">
-
+              <h1> WARNING! </h1>
+              <h3>This will cost you X ETH.</h3>
+              <p>You may not remove this request once it has been submitted.</p>
                 <form class="form-horizontal" role="form">
                   <div class="form-group">
                     <label  class="col-sm-2 control-label"
-                              for="inputEmail3">Request</label>
+                              for="inputEmail3">Stat Type</label>
                     <div class="col-sm-10">
                         <input type="text" class="form-control"
                         id="inputType" placeholder="max, min, mean, etc."/>
@@ -121,13 +124,15 @@
                            <span class="sr-only">Close</span>
                     </button>
                     <h4 class="modal-title" id="myModalLabel">
-                        Submit Gas Things
+                        Submit Gas Stats
                     </h4>
                 </div>
 
                 <!-- Modal Body -->
                 <div class="modal-body">
-
+                  <h1> WARNING! </h1>
+                  <h2>Submitting an answer will require collateral ETH for a minimum of 256 blocks (~1 hour).</h2>
+                  <p>Make sure you are correct or risk losing this ETH to a challenger.</p>
                     <form class="form-horizontal" role="form">
                       <div class="form-group">
                         <label class="col-sm-2 control-label"
@@ -146,6 +151,7 @@
                         </div>
                       </div>
                     </form>
+                    <p>You may not remove this submission once it has been submitted.</p>
                 </div>
 
                 <!-- Modal Footer -->
@@ -174,12 +180,15 @@
                                <span class="sr-only">Close</span>
                         </button>
                         <h4 class="modal-title" id="myModalLabel">
-                            Challenge a Submission!
+                            Challenge a submission!
                         </h4>
                     </div>
 
                     <!-- Modal Body -->
                     <div class="modal-body">
+                      <h1> WARNING! </h1>
+                      <h2>Submitting a challenge will require collateral ETH.</h2>
+                      <p>If your challenge is incorrect, you will lose this ETH.</p>
                         <form class="form-horizontal" role="form">
                           <div class="form-group">
                             <label class="col-sm-2 control-label"
@@ -198,9 +207,11 @@
                             </div>
                           </div>
                         </form>
+                        <p>You may not remove this challenge once it has been submitted.</p>
                     </div>
 
                     <!-- Modal Footer -->
+
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default"
                                 data-dismiss="modal">
@@ -216,6 +227,10 @@
 
 <!-- Table -->
 <div class="container">
+  <button class="btn btn-default" data-toggle="modal" data-target="#myModalRequest">Request</button>
+  <button class="btn btn-default" data-toggle="modal" data-target="#myModalSubmit">Submit Stat</button>
+  <button class="btn btn-default" data-toggle="modal" data-target="#myModalChallenge">Challenge</button>
+
   <!-- <h2>Basic Table</h2>
   <p>The .table class adds basic styling (light padding and only horizontal dividers) to a table:</p> -->
   <table class="table" id="tab_logic">
