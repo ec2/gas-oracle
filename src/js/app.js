@@ -50,7 +50,7 @@ App = {
 
       // Use our contract to retieve and mark the adopted pets.
       //return App.markAdopted();
-      //return App.addRow();
+      return App.addRow();
       });
 
     //return App.initAdoptionContract();
@@ -73,14 +73,63 @@ App = {
   //   return App.bindEvents();
   // },
 
-//  addRow: function() {
-//  }
+ addRow: function() {
+   var i=2;
 
-  bindEvents: function() {
+  $("#add_row").click(function(){
+    console.log('add row');
+    var inputtype = document.getElementById('inputType').value;
+    console.log(inputtype);
+    var blocknumber = document.getElementById('inputBlocknumber').value;
+    console.log(blocknumber);
+    if(inputtype != "" && blocknumber != ""){
+     $('#tab_logic').append('<tr id="addr'+(i)+'"></tr>');
+     $('#addr'+i).html("<td>"+ (i) +"</td><td>" + inputtype + "</td><td>"+ blocknumber +"</td><td id='submission"+i+"'></td><td id='challenge"+i+"'></td><td id='verified"+i+"'></td>");
+     i++;
+    }
+  });
+    return App.updateSubmission();
+  },
+
+ updateSubmission: function() {
+    $("#update_submission").click(function(){
+      console.log('update submission');
+      var submission_index = document.getElementById('inputIndex').value;
+      console.log(submission_index);
+      var submission = document.getElementById('submission').value;
+      console.log(submission);
+      j = submission_index;
+
+      if(submission_challenge_array[j] == 0) {
+        $('#submission'+j).replaceWith("<td id='submission" + j + "''>" + submission + "</td>");
+        $('#verified'+j).replaceWith("<td id='verified" + j + "''><span class='glyphicon glyphicon-remove'></td>");
+        submission_challenge_array[j] = 1;
+      }
+      else{
+        //alert that someone already submitted
+      }
+    });
+    return App.challengeSubmission();
+  },
+
+ challengeSubmission: function() {
+    $("#challenge_submission").click(function(){
+      console.log('challenge submission');
+      var challenge_index = document.getElementById('challengeIndex').value;
+      console.log(challenge_index);
+      var challenge = document.getElementById('challenge').value;
+      console.log(challenge);
+      j = challenge_index;
+      $('#challenge'+j).replaceWith("<td id='challenge" + j + "''>" + challenge + "</td>");
+      $('#verified'+j).replaceWith("<td id='verified" + j + "''>Pending...</td>");
+    });
+  },
+
+ bindEvents: function() {
     $(document).on('click', '.btn-adopt', App.handleAdopt);
   },
 
-  handleAdopt: function() {
+ handleAdopt: function() {
     event.preventDefault();
 
     var petId = parseInt($(event.target).data('id'));
@@ -106,7 +155,7 @@ App = {
     });
   },
 
-  markAdopted: function(adopters, account) {
+ markAdopted: function(adopters, account) {
     var adoptionInstance;
 
     App.contracts.Adoption.deployed().then(function(instance) {
@@ -128,34 +177,8 @@ App = {
 
 $(function() {
   $(window).load(function() {
+    submission_challenge_array = new Array(1000);
+    submission_challenge_array.fill(0);
     App.init();
   });
-});
-
-$(document).ready(function(){
-
-  var i=2;
-
- $("#add_row").click(function(){
-   console.log('add row');
-   $('#tab_logic').append('<tr id="addr'+(i)+'"></tr>');
-   var inputtype = document.getElementById('inputType').value;
-   console.log(inputtype);
-   var blocknumber = document.getElementById('inputBlocknumber').value;
-   console.log(blocknumber);
-
-  $('#addr'+i).html("<td>"+ (i) +"</td><td>" + inputtype + "</td><td>"+ blocknumber +"</td><td id='submission"+i+"'></td><td id='challenge"+i+"'></td><td id='verified"+i+"'></td>");
-  i++;
-});
-
- $("#update_submission").click(function(){
-   console.log('update submission');
-   var submission_index = document.getElementById('inputIndex').value;
-   console.log(submission_index);
-   var submission = document.getElementById('submission').value;
-   console.log(submission);
-   j = submission_index;
-   $('#submission'+j).replaceWith("<td id='submission" + j + "''>" + submission + "</td>");
- });
-
 });
