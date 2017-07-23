@@ -16,6 +16,10 @@ contract Database {
     bytes32   receiptRoot;    // 5
     uint      currGasUsed;    // This is the current total gas seen in tx proved.
     uint      currAvgGasPrice;// This is the current avg in the tx seen so far.
+
+    uint      maxFee;
+    uint      maxGas;
+    uint      minGas;
   }
 
   //Block number => made up transaction hash => details about transaction.
@@ -75,6 +79,22 @@ contract Database {
 
     blocks[blockNum].currAvgGasPrice = (blocks[blockNum].currAvgGasPrice * blocks[blockNum].currGasUsed + gasUsed * gasPrice) / (blocks[blockNum].currGasUsed + gasUsed);
     blocks[blockNum].currGasUsed += gasUsed;
+
+    if(blocks[blockNum].maxGas < gasUsed){
+      if(blocks[blockNum].maxGas == 0 && blocks[blockNum].minGas == 0){
+        blocks[blockNum].maxGas = gasUsed;
+        blocks[blockNum].minGas = blocks[blockNum].maxGas;
+      }
+      else {
+        blocks[blockNum].maxGas = gasUsed;
+      }
+    }
+    if(blocks[blockNum].minGas > gasUsed){
+      blocks[blockNum].minGas = gasUsed;
+    }
+    if(blocks[blockNum].maxFee < gasUsed * gasPrice) {
+      blocks[blockNum].maxFee = gasUsed * gasPrice;
+    }
   }
 
   function getPrice(uint blockNum) constant returns (uint) {
@@ -84,7 +104,15 @@ contract Database {
   function getUsed(uint blockNum) constant returns (uint) {
     return blocks[blockNum].currGasUsed;
   }
-
+  function getMaxGas (uint blockNum) constant returns (uint) {
+    return blocks[blockNum].maxGas;
+  }
+  function getMinGas (uint blockNum) constant returns (uint) {
+    return blocks[blockNum].minGas;
+  }
+   function getMaxFee (uint blockNum) constant returns (uint) {
+      return blocks[blockNum].maxFee;
+    }
   function getStat(uint dataType, uint blockNum) returns (uint) {
     //In the future, this will match the type of the thing we are submitting
     return blocks[blockNum].currAvgGasPrice;

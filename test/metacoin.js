@@ -3,7 +3,7 @@ var GasHole = artifacts.require("./GasHole.sol");
 var TestRequest = artifacts.require("./TestRequest.sol");
 const fs = require("fs");
 
-const proofData  = JSON.parse(fs.readFileSync('../fuck.json').toString());
+const proofData  = JSON.parse(fs.readFileSync('/home/eric/oracle/fuck.json').toString());
 //console.log(proofData[0].txproof)
 
 contract('Database', function(accounts) {
@@ -305,6 +305,10 @@ contract('Database', function(accounts) {
         rec = proofData[i].receiptproof;
         await db.submitTransaction(blockNum, tx.path, tx.stack, tx.prefix, tx.value, rec.stack, rec.prefix, rec.value)
       }
+    }).then(async()=>{
+      await db.getMaxGas.call(blockNum).then((max)=> {console.log("Max ", max)});
+      await db.getMinGas.call(blockNum).then((min)=> {console.log("Min ", min)});
+      return db.getMaxFee.call(blockNum).then((fee)=> {console.log("Fee ", fee)});
     }).then(() => {
       return db.getPrice.call(blockNum)
     }).then(res => {
