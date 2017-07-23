@@ -81,15 +81,15 @@
                 <form class="form-horizontal" role="form">
                   <div class="form-group">
                     <label  class="col-sm-2 control-label"
-                              for="inputEmail3">Stat Type</label>
+                              for="inputEmail3">datatype</label>
                     <div class="col-sm-10">
                         <input type="text" class="form-control"
-                        id="inputType" placeholder="max, min, mean, etc."/>
+                        id="inputType" placeholder="avgGas, cumulativeGas, avgGasOver10Blocks, etc."/>
                     </div>
                   </div>
                   <div class="form-group">
                     <label class="col-sm-2 control-label"
-                          for="inputPassword3" >BlockNumber</label>
+                          for="inputPassword3" >blockNumber</label>
                     <div class="col-sm-10">
                         <input type="text" class="form-control"
                             id="inputBlocknumber" placeholder="block number"/>
@@ -131,7 +131,7 @@
                 <!-- Modal Body -->
                 <div class="modal-body">
                   <h1> WARNING! </h1>
-                  <p>Submitting an answer will require collateral ETH for a minimum of 256 blocks (~1 hour). Make sure you are correct or risk losing this ETH to a challenger.</p>
+                  <p>Submitting an answer will require bond ETH for a minimum of 256 blocks (~1 hour). Make sure you are correct or risk losing this ETH to a challenger.</p>
                   <p>You may not remove this request once it has been submitted.</p>
                     <form class="form-horizontal" role="form">
                       <div class="form-group">
@@ -186,7 +186,7 @@
                     <!-- Modal Body -->
                     <div class="modal-body">
                       <h1> WARNING! </h1>
-                      <h2>Submitting a challenge will require collateral ETH.</h2>
+                      <p>Submitting a challenge will require bond ETH.</p>
                       <p>If your challenge is incorrect, you will lose this ETH.</p>
                         <form class="form-horizontal" role="form">
                           <div class="form-group">
@@ -246,7 +246,7 @@
     <tbody>
       <tr id='addr0'>
         <td>eg.</td>
-        <td>mean</td>
+        <td>cumulativeGas</td>
         <td>23489</td>
         <td>17 bajillion</td>
         <td>17.0007 bajillion</td>
@@ -254,7 +254,7 @@
       </tr>
       <tr id='addr1'>
         <td>eg.</td>
-        <td>maximum</td>
+        <td>avgGas</td>
         <td>15</td>
         <td>8973</td>
         <td></td>
